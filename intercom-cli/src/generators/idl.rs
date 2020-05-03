@@ -268,3 +268,18 @@ pub fn write(
 
     Ok(())
 }
+
+/// Generates the manifest content.
+///
+/// - `out` - The writer to use for output.
+pub fn write_json(
+    lib: intercom::typelib::TypeLib,
+    opts: ModelOptions,
+    out: &mut dyn Write,
+) -> Result<(), GeneratorError>
+{
+    let idl_model = IdlLibrary::try_from(lib, &opts)?;
+    write!(out, "{}", serde_json::to_string_pretty(&idl_model).unwrap())?;
+    Ok(())
+}
+

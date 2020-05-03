@@ -51,6 +51,20 @@ fn main()
                 )),
         )
         .subcommand(
+            SubCommand::with_name("idljson")
+                .about("Generates IDL JSON file from the Rust crate")
+                .arg(
+                    Arg::with_name("path")
+                        .help("Path to the crate to process")
+                        .default_value(".")
+                        .index(1),
+                )
+                .arg(Arg::with_name("all").long("all").help(
+                    "Include both Automation and Raw type systems in the IDL.{n}\
+                     Normally the IDL only includes the Automation type system interfaces.",
+                )),
+        )
+        .subcommand(
             SubCommand::with_name("manifest")
                 .about(
                     "Generates a manifest file for the Rust crate for \
@@ -132,6 +146,11 @@ fn run_cmd(matches: &ArgMatches) -> Result<(), failure::Error>
             let path = Path::new(args.value_of("path").unwrap());
             let lib = typelib::read_typelib(path)?;
             generators::idl::write(lib, opts, &mut io::stdout())?;
+        }
+        ("idljson", Some(args)) => {
+            let path = Path::new(args.value_of("path").unwrap());
+            let lib = typelib::read_typelib(path)?;
+            generators::idl::write_json(lib, opts, &mut io::stdout())?;
         }
         ("cpp", Some(args)) => {
             let path = Path::new(args.value_of("path").unwrap());
